@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 
 '''
 timezone'U nerenin timezone'u yapsam,
@@ -63,7 +63,7 @@ class CommunityBannedUser(models.Model):  # banned from community
     community_id = models.ForeignKey('Community', on_delete=models.CASCADE)
     banned_user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     banning_moderator_user_id = models.ForeignKey(
-        'User', on_delete=models.CASCADE)
+        'User', related_name='banning_Mod', on_delete=models.DO_NOTHING)
     is_active = models.BooleanField(default=True)
     created_date = models.DateTimeField(default=timezone.now)
 

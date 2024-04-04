@@ -74,13 +74,28 @@ WSGI_APPLICATION = 'BoSProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
+# region sqlitedb
+''' DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+'''
+# endregion
 
+# region postgresqldb
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'BoS',
+        'USER': 'BoSuser',
+        'PASSWORD': '712GeE84',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+# endregion
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
