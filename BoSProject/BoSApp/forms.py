@@ -1,7 +1,7 @@
 from django import forms
-from .models import User
+from .models import UserProfile
 
-
+'''
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
 
@@ -12,3 +12,4 @@ class UserForm(forms.ModelForm):
     def clean_password(self):
         password = self.cleaned_data['password']
         return password
+'''

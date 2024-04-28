@@ -5,32 +5,139 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% trans "Create User" %}</title>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    <style>
+      .error {
+        color: red;
+      }
+    </style>
   </head>
   <body>
     <h1>{% trans "Create User" %}</h1>
-    <form method="POST">
+    <div id="userForm">
       {% csrf_token %}
-
       <label for="username">{% trans "Username" %}:</label><br />
-      <input type="text" id="username" name="username" required /><br />
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        onblur="checkFieldExistence('username')"
+      /><br />
+      <div id="usernameError" class="error"></div>
 
       <label for="email">{% trans "Email" %}:</label><br />
-      <input type="email" id="email" name="email" required /><br />
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        onblur="checkFieldExistence('email')"
+      /><br />
+      <div id="emailError" class="error"></div>
 
-      <label for="password">{% trans "Password" %}:</label><br />
+      <label for="first_name">{% trans "First Name" %}:</label><br />
+      <input type="text" id="first_name" name="first_name" /><br />
+
+      <label for="last_name">{% trans "Last Name" %}:</label><br />
+      <input type="text" id="last_name" name="last_name" /><br />
+      <br />
+      <label for="password">{%trans "Password" %}</label><br />
       <input type="password" id="password" name="password" required /><br />
+      <br />
+      <label for="image">{%trans "Profile Image" %}:</label><br />
+      <input type="file" id="image" name="image" /><br />
+      <br />
+      <label for="is_private">{%trans "Private Account" %}:</label><br />
+      <input type="checkbox" id="is_private" name="is_private" value="false" />
+      <br />
+      <button type="button" onclick="submitUser()">{% trans "Create" %}</button>
+    </div>
 
-      <label for="is_private">{% trans "Is Private" %}:</label>
-      <input type="checkbox" id="is_private" name="is_private" /><br />
+    <script>
+      function checkFieldExistence(field) {
+        console.log("checkFieldExistence start");
+        const value = document.getElementById(field).value;
+        const errorDiv = document.getElementById(field + "Error");
+        fetch(`/api/check_${field}/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCsrfToken(),
+          },
+          body: JSON.stringify({ [field]: value }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.isAvailable) {
+              errorDiv.textContent = `{% trans "This" %} ${field} {% trans "is already taken." %}`;
+            } else {
+              errorDiv.textContent = "";
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+        console.log("checkFieldExistence end");
+      }
+      function encodeImageFileAsURL(elementId, callback) {
+        console.log("encodeImageFileAsURL start");
+        var file = document.getElementById(elementId).files[0];
+        if (file) {
+          var reader = new FileReader();
+          reader.onloadend = function () {
+            callback(reader.result);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          callback(null);
+        }
+        console.log("encodeImageFileAsURL end");
+      }
 
-      <button type="submit">{% trans "Create" %}</button>
-    </form>
+      function submitUser() {
+        console.log("submitUser start");
+        encodeImageFileAsURL("image", function (base64Image) {
+          const userData = {
+            user: {
+              username: document.getElementById("username").value,
+              email: document.getElementById("email").value,
+              first_name: document.getElementById("first_name").value,
+              last_name: document.getElementById("last_name").value,
+              password: document.getElementById("password").value,
+            },
+            is_private: document.getElementById("is_private").checked,
+          };
+
+          if (base64Image) {
+            userData.image = base64Image;
+          }
+
+          fetch("/userprofiles/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCsrfToken(),
+            },
+            body: JSON.stringify(userData),
+          })
+            .then((response) => {
+              if (!response.ok) throw response.json();
+              return response.json();
+            })
+            .then((data) => {
+              alert('{% trans "User created successfully!" %}');
+            })
+            .catch(async (errorPromise) => {
+              const error = await errorPromise;
+              console.error("Error:", error);
+            });
+        });
+        console.log("submitUser end");
+      }
+
+      function getCsrfToken() {
+        console.log("getCsrfToken start");
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+        console.log("getCsrfToken end");
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load i18n %}
+<html lang="{{ request.LANGUAGE_CODE }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% trans "Create User" %}</title>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+  </head>
+  <body>
+    <h1>{% trans "Create User" %}</h1>
+    <form method="POST">
+      {% csrf_token %}
+
+      <label for="username">{% trans "Username" %}:</label><br />
+      <input type="text" id="username" name="username" required /><br />
+
+      <label for="email">{% trans "Email" %}:</label><br />
+      <input type="email" id="email" name="email" required /><br />
+
+      <label for="password">{% trans "Password" %}:</label><br />
+      <input type="password" id="password" name="password" required /><br />
+
+      <label for="is_private">{% trans "Is Private" %}:</label>
+      <input type="checkbox" id="is_private" name="is_private" /><br />
+
+      <button type="submit">{% trans "Create" %}</button>
+    </form>
+  </body>
+</html>
