@@ -6,24 +6,96 @@
     <title>Create Post Type</title>
   </head>
   <body>
+    {% csrf_token %}
+
     <h1>Create Post Type</h1>
-    <form method="post">
-      {% csrf_token %}
-      <div id="postTypeForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" /><br />
-        <button type="submit">Submit</button>
-      </div>
-    </form>
+    <div id="dataTypesForm">
+      <select id="dataTypeSelect">
+        <option value="integer">Integer</option>
+        <option value="float">Float</option>
+        <option value="string">String</option>
+        <option value="boolean">Boolean</option>
+        <option value="date">Date</option>
+        <option value="image">Image</option>
+        <option value="location">Location</option>
+      </select>
+      Description:
+      <input
+        type="text"
+        id="dataTypeDescription"
+        placeholder="Optional description"
+      />
+      <button type="button" onclick="addDataType()">Add</button>
+    </div>
+    <ul id="dataTypeList"></ul>
+    <button onclick="savePostFormat()">Save Post Format</button>
   </body>
+
   <script>
     const params = new URLSearchParams(window.location.search);
     const communityId = params.get("communityId");
+    let dataTypes = [];
     const details = document.getElementById("postTypeForm");
+
     details.innerHTML = `
                     <div class="community-details">
                         <h1>${communityId}</h1>
                     </div>
                 `;
+
+    function addDataType() {
+      const select = document.getElementById("dataTypeSelect");
+      const descriptionInput = document.getElementById("dataTypeDescription");
+      const type = select.value;
+      const description = descriptionInput.value;
+      dataTypes.push({ type: type, description: description, value: "" });
+      updateListDisplay();
+    }
+
+    function updateListDisplay() {
+      const list = document.getElementById("dataTypeList");
+      list.innerHTML = "";
+      dataTypes.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${item.type} - ${item.description} (click to remove)`;
+        li.className = "data-item";
+        li.onclick = () => {
+          removeDataType(index);
+        };
+        list.appendChild(li);
+      });
+    }
+
+    function removeDataType(index) {
+      dataTypes.splice(index, 1);
+      updateListDisplay();
+    }
+
+    function savePostFormat() {
+      const postData = {
+        community: communityId,
+        format_type: dataTypes,
+      };
+
+      const jsonData = JSON.stringify(postData);
+
+      console.log(jsonData);
+
+      fetch(`/postformats/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
+        body: jsonData,
+      })
+        .then((response) => response.json())
+        .then((data) => console.log("Success:", data))
+        .catch((error) => console.error("Error:", error));
+    }
+
+    function getCsrfToken() {
+      return document.querySelector("[name=csrfmiddlewaretoken]").value;
+    }
   </script>
 </html>

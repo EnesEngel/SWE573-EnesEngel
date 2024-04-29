@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Community Post Formats</title>
+    <style>
+      .post-format-section {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+      .post-format-header {
+        background-color: #f4f4f4;
+        padding: 10px;
+        font-weight: bold;
+        border-bottom: 1px solid #ddd;
+      }
+      .post-format-item {
+        margin-left: 20px;
+        list-style-type: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Community Post Formats</h1>
+    <div id="postFormatList"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        const communityId = params.get("communityId");
+
+        if (communityId) {
+          fetch(`/postformats/?community_id=${communityId}`)
+            .then((response) => response.json())
+            .then((postFormats) => {
+              console.log(postFormats);
+              const container = document.getElementById("postFormatList");
+              postFormats.forEach((postFormat) => {
+                const section = document.createElement("div");
+                section.className = "post-format-section";
+
+                const header = document.createElement("div");
+                header.className = "post-format-header";
+                header.textContent = `Post Format ID: ${postFormat.post_format_id}`;
+                section.appendChild(header);
+
+                const list = document.createElement("ul");
+                postFormat.format_type.forEach((format) => {
+                  const item = document.createElement("li");
+                  item.className = "post-format-item";
+                  item.textContent = `Type: ${format.type}, Description: ${
+                    format.description || "No description provided"
+                  }`;
+                  list.appendChild(item);
+                });
+                section.appendChild(list);
+                container.appendChild(section);
+              });
+            })
+            .catch((error) => {
+              console.error("Error loading post formats:", error);
+              document.getElementById("postFormatList").textContent =
+                "Error loading post formats.";
+            });
+        } else {
+          document.getElementById("postFormatList").textContent =
+            "No community ID provided.";
+        }
+      });
+    </script>
+  </body>
+</html>

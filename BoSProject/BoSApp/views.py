@@ -1,8 +1,9 @@
 from calendar import c
-from django.shortcuts import render, redirect
+import re
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-
+from rest_framework.parsers import JSONParser
 from .models import MembershipRequest, Owner, Post, PostFormat, User, UserProfile, Community, Follower, CommunityMember, Moderator, CommunityBannedUser, UserBlockedUser, Comment, Vote, FollowRequest
 from .serializers import CommunitySerializer, FollowerSerializer, PostSerializer, UserProfileSerializer, OwnerSerializer, ModeratorSerializer, CommunityMemberSerializer, CommunityBannedUserSerializer, UserBlockedUserSerializer, VoteSerializer, CommentSerializer, PostFormatSerializer, MembershipRequestSerializer, FollowRequestSerializer
 # from .forms import UserForm
@@ -104,6 +105,10 @@ def create_post_page_view(request):
 
 def create_posttype_page_view(request):
     return render(request, 'BoSApp/create_posttype.html')
+
+
+def post_formats_page_view(request):
+    return render(request, 'BoSApp/postTypes.html')
 
 
 def create_user_view(request):
@@ -267,6 +272,7 @@ class CommunityMemberViewSet(viewsets.ModelViewSet):
     queryset = CommunityMember.objects.all()
     serializer_class = CommunityMemberSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser]
 
 
 class CommunityBannedUserViewSet(viewsets.ModelViewSet):
@@ -323,6 +329,15 @@ class CommunityViewSet(viewsets.ModelViewSet):
 class PostFormatViewSet(viewsets.ModelViewSet):
     queryset = PostFormat.objects.all()
     serializer_class = PostFormatSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        community_id = self.request.query_params.get('community_id')
+        print("communityId:"+community_id)
+        if community_id is not None:
+            queryset = queryset.filter(community__community_id=community_id)
+        return queryset
 
 
 class MembershipRequestViewSet(viewsets.ModelViewSet):

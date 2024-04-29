@@ -16,12 +16,20 @@
     </style>
   </head>
   <body>
+    {% csrf_token %}
     <div id="communityDetails"></div>
+    <div class="button" id="showPostTypesButton" style="display: none">
+      <button onclick="PostTypes()">Post Types</button>
+    </div>
     <div class="button" id="postTypeButton" style="display: none">
       <button onclick="CreatePostType()">Create Post Type</button>
     </div>
     <div class="button" id="postButton" style="display: none">
       <button onclick="CreatePost()">Create Post</button>
+    </div>
+
+    <div class="button" id="communityButton" style="display: none">
+      <button onclick="JoinCommunity()">join community</button>
     </div>
 
     <script>
@@ -34,12 +42,7 @@
           .then((roleData) => {
             console.log(roleData.is_member);
             console.log(roleData.is_owner);
-            if (roleData.is_owner) {
-              document.getElementById("postTypeButton").style.display = "block";
-            }
-            if (roleData.is_member) {
-              document.getElementById("postButton").style.display = "block";
-            }
+            FixButtons(roleData);
           })
           .catch((error) => console.error("Error checking roles:", error));
 
@@ -67,6 +70,59 @@
           "No community ID provided.";
       }
 
+      function FixButtons(roleData) {
+        if (roleData.is_owner) {
+          document.getElementById("postTypeButton").style.display = "block";
+        }
+        else{
+          document.getElementById("postTypeButton").style.display = "none";
+        }
+        if (roleData.is_member) {
+          document.getElementById("showPostTypesButton").style.display = "block";
+          document.getElementById("postButton").style.display = "block";
+          document.getElementById("communityButton").style.display = "none";
+        } else {
+          document.getElementById("showPostTypesButton").style.display = "none";
+          document.getElementById("communityButton").style.display = "block";
+          document.getElementById("postButton").style.display = "none";
+        }
+      }
+      function JoinCommunity() {
+        const userId= {{ user.id }};
+        console.log("User id:");
+        console.log(userId);
+        console.log("Community id:");
+        console.log(communityId);
+        const communityMember = {
+          community: communityId,
+          user:userId,
+        };
+        fetch(`/communitymembers/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCsrfToken(),
+          },
+          body: JSON.stringify(communityMember),
+          credentials: "include",
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to join community");
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Joined community:", data);
+            alert("Joined community successfully!");
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.error("Error joining community:", error);
+            alert("Error joining community.");
+          });
+      }
+      function PostTypes() {
+        window.location.href = `/post_formats_page_view/?communityId=${communityId}`;
+      }
       function CreatePostType() {
         window.location.href = `/create_posttype_page/?communityId=${communityId}`;
       }

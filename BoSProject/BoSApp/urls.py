@@ -51,6 +51,8 @@ urlpatterns = [
     path('create_posttype_page/', views.create_posttype_page_view,
          name='create_posttype_page'),
     path('create_post_page/', views.create_post_page_view, name='create_post_page'),
+    path('post_formats_page_view/', views.post_formats_page_view,
+         name='post_formats_page_view'),
 
     # path('create/', views.create_user, name='create_user'),
 ]
