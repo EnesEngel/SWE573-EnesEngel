@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Communities I own</title>
+    <style>
+      .community-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Communities I own</h1>
+    <div id="communityList"></div>
+
+    <script>
+      function fetchCommunities() {
+        fetch("/owned-communities/", {
+          headers: {
+            Authorization: "Token " + localStorage.getItem("authToken"),
+          },
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch");
+            return response.json();
+          })
+          .then((data) => {
+            const container = document.getElementById("communityList");
+            data.forEach((community) => {
+              const div = document.createElement("div");
+              div.className = "community-box";
+              div.innerHTML = `
+              <a href="/single_community/?id=${community.community_id}">${community.name}</a>
+              <p>${community.description}</p>
+            `;
+              container.appendChild(div);
+            });
+          })
+          .catch((error) => {
+            console.error("Error loading my communities:", error);
+            document.getElementById("communityList").innerText =
+              "Error loading communities.";
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchCommunities);
+    </script>
+  </body>
+</html>

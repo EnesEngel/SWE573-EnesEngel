@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% load i18n %}
+<html lang="{{ request.LANGUAGE_CODE }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% trans "Login" %}</title>
+    <style>
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>{% trans "Login" %}</h1>
+    <div id="loginForm">
+      {% csrf_token %}
+      <label for="username">{% trans "Username" %}:</label><br />
+      <input type="text" id="username" name="username" required /><br />
+
+      <br />
+      <br />
+
+      <label for="password">{%trans "Password" %}</label><br />
+      <input type="password" id="password" name="password" required /><br />
+      <br />
+
+      <button type="button" onclick="loginUser()">{% trans "Login" %}</button>
+    </div>
+
+    <script>
+      function loginUser() {
+        const userData = {
+          user: {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+          },
+        };
+
+        fetch("/login/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCsrfToken(),
+          },
+          body: JSON.stringify(userData),
+        })
+          .then((response) => {
+            if (!response.ok) throw response.json();
+            return response.json();
+          })
+          .then((data) => {
+            window.location.href = "/feed/"; 
+          })
+          .catch(async (errorPromise) => {
+            const error = await errorPromise;
+            console.error("Error:", error);
+            alert("Login failed: " + (error.error || "Unknown Error"));
+          });
+      }
+      function getCsrfToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+      }
+    </script>
+  </body>
+</html>
