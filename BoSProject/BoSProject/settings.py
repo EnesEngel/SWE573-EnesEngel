@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-t%@5v)-)hgk4@q-hfyb@8ee!wx0oto=mak^o#zsb=%ezz#z__$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ALLOWED_HOSTS = ["167.172.100.4",  'localhost', '127.0.0.1']
 ALLOWED_HOSTS = ["167.172.100.4"]
 
 CSRF_COOKIE_SECURE = True
@@ -33,7 +34,9 @@ CSRF_TRUSTED_ORIGINS = ['http://167.172.100.4', 'http://127.0.0.1']
 # ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
+
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -97,13 +100,14 @@ WSGI_APPLICATION = 'BoSProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'BoS',
-        'USER': 'BoSuser',
-        'PASSWORD': '712GeE84',
-        'HOST': 'db',
+        'NAME': 'wyzdhmmn',
+        'USER': 'wyzdhmmn',
+        'PASSWORD': '5kMoxw65OKgurdpVhh_KIg4efhn6-4kM',
+        'HOST': 'lucky.db.elephantsql.com',
         'PORT': '5432',
     }
 }
+CSRF_COOKIE_HTTPONLY = False
 # endregion
 
 # Password validation
