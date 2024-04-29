@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Community Details</title>
+    <style>
+      .community-details {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px;
+      }
+      .button {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="communityDetails"></div>
+    <div class="button" id="postTypeButton" style="display: none">
+      <button onclick="CreatePostType()">Create Post Type</button>
+    </div>
+    <div class="button" id="postButton" style="display: none">
+      <button onclick="CreatePost()">Create Post</button>
+    </div>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const communityId = params.get("id");
+
+      if (communityId) {
+        fetch(`/communities/${communityId}/user_role/`)
+          .then((response) => response.json())
+          .then((roleData) => {
+            console.log(roleData.is_member);
+            console.log(roleData.is_owner);
+            if (roleData.is_owner) {
+              document.getElementById("postTypeButton").style.display = "block";
+            }
+            if (roleData.is_member) {
+              document.getElementById("postButton").style.display = "block";
+            }
+          })
+          .catch((error) => console.error("Error checking roles:", error));
+
+        fetch(`/communities/${communityId}/`)
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch");
+            return response.json();
+          })
+          .then((community) => {
+            const details = document.getElementById("communityDetails");
+            details.innerHTML = `
+                    <div class="community-details">
+                        <h1>${community.name}</h1>
+                        <p>${community.description}</p>
+                    </div>
+                `;
+          })
+          .catch((error) => {
+            console.error("Failed to load community details:", error);
+            document.getElementById("communityDetails").innerText =
+              "Failed to load community details.";
+          });
+      } else {
+        document.getElementById("communityDetails").innerText =
+          "No community ID provided.";
+      }
+
+      function CreatePostType() {
+        window.location.href = `/create_posttype_page/?communityId=${communityId}`;
+      }
+      function CreatePost() {
+        window.location.href = `/create_post_page/?communityId=${communityId}`;
+      }
+      function getCsrfToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,66 @@
+<!-- create_community.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Community</title>
+  </head>
+  <body>
+    <p>Logged in as: {{ user.id }}</p>
+
+    <h1>Create Community</h1>
+    <form id="createCommunityForm">
+      {% csrf_token %}
+      <label for="name">Name:</label><br />
+      <input type="text" id="name" name="name" required /><br />
+
+      <label for="description">Description:</label><br />
+      <textarea id="description" name="description" required></textarea><br />
+
+      <label for="image">Image (optional):</label><br />
+      <input type="file" id="image" name="image" accept="image/*" /><br />
+
+      <label for="is_private">Private:</label>
+      <input type="checkbox" id="is_private" name="is_private" /><br />
+
+      <button type="button" onclick="submitCommunity({{ user.id }})">
+        Create Community
+      </button>
+    </form>
+
+    <script>
+      function submitCommunity(user_id) {
+        const formData = new FormData(
+          document.getElementById("createCommunityForm")
+        );
+        formData.append("owner_user", user_id);
+
+        fetch("/communities/", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCsrfToken(),
+          },
+          body: formData,
+          credentials: "include",
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to create community");
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Community created:", data);
+            alert("Community created successfully!");
+          })
+          .catch((error) => {
+            console.error("Error creating community:", error);
+            alert("Error creating community.");
+          });
+      }
+
+      function getCsrfToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+      }
+    </script>
+  </body>
+</html>
