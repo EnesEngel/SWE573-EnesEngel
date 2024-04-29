@@ -33,7 +33,7 @@ CSRF_TRUSTED_ORIGINS = ['http://167.172.100.4', 'http://127.0.0.1']
 # ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
-
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
