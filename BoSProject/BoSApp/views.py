@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import action
+from django.views.decorators.csrf import ensure_csrf_cookie
 # serializerlar yazılınca buraya ekleyeceğim from .serializers import UserSerializer, LoginSerializer
 # Create your views here.
 
@@ -300,11 +301,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
 
+
 class CommunityViewSet(viewsets.ModelViewSet):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
     permission_classes = [IsAuthenticated]
 
+    @ensure_csrf_cookie
     def perform_create(self, serializer):
         serializer.save(owner_user=self.request.user)
         community = serializer.instance
