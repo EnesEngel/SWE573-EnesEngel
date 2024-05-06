@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create Community</title>
-    <meta name="csrf-token" content="{{ csrf_token }}" />
   </head>
   <body>
     <p>Logged in as: {{ user.id }}</p>
@@ -58,6 +57,10 @@
       }
 
       function getCsrfToken() {
+        print(
+          "csrf token: ",
+          document.querySelector('meta[name="csrf-token"]')
+        );
         return document
           .querySelector('meta[name="csrf-token"]')
           .getAttribute("content");
