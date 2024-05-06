@@ -301,13 +301,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
 
-
 class CommunityViewSet(viewsets.ModelViewSet):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
     permission_classes = [IsAuthenticated]
 
-    @ensure_csrf_cookie
+    @csrf_exempt
     def perform_create(self, serializer):
         serializer.save(owner_user=self.request.user)
         community = serializer.instance
