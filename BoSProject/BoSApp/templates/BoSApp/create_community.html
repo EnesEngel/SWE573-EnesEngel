@@ -24,13 +24,12 @@
       <label for="is_private">Private:</label>
       <input type="checkbox" id="is_private" name="is_private" /><br />
 
-      <button type="button" onclick="submitCommunity({{ user.id }})">
+      <button type="button" onclick="submitCommunity('{{ user.id }}')">
         Create Community
       </button>
     </form>
 
     <script>
-      
       function submitCommunity(user_id) {
         const formData = new FormData(
           document.getElementById("createCommunityForm")
@@ -60,6 +59,10 @@
       }
 
       function getCsrfToken() {
+        console.log(
+          "Csrf token:",
+          document.querySelector("[name=csrfmiddlewaretoken]").value
+        );
         return document.querySelector("[name=csrfmiddlewaretoken]").value;
       }
     </script>
