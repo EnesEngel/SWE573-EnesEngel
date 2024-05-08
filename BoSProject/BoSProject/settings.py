@@ -104,8 +104,8 @@ REST_FRAMEWORK = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'wyzdhmmn123',
-        'USER': 'wyzdhmmn123',
+        'NAME': 'wyzdhmmn',
+        'USER': 'wyzdhmmn',
         'PASSWORD': '5kMoxw65OKgurdpVhh_KIg4efhn6-4kM',
         'HOST': 'lucky.db.elephantsql.com',
         'PORT': '5432',
