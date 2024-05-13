@@ -26,12 +26,12 @@ SECRET_KEY = 'django-insecure-t%@5v)-)hgk4@q-hfyb@8ee!wx0oto=mak^o#zsb=%ezz#z__$
 DEBUG = True
 
 # ALLOWED_HOSTS = ["167.172.100.4",  'localhost', '127.0.0.1']
-ALLOWED_HOSTS = ["167.172.100.4"]
+# ALLOWED_HOSTS = ["167.172.100.4"]
 
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_DOMAIN = 'http://167.172.100.4'
 CSRF_TRUSTED_ORIGINS = ['http://167.172.100.4', 'http://127.0.0.1']
-# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 

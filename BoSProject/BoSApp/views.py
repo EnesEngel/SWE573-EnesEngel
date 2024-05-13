@@ -304,18 +304,20 @@ class CommentViewSet(viewsets.ModelViewSet):
 class CommunityViewSet(viewsets.ModelViewSet):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
-    permission_classes = [IsAuthenticated]
 
     @csrf_exempt
     def perform_create(self, serializer):
-        serializer.save(owner_user=self.request.user)
+        userId = self.request.data.get('user_id')
+        user = User.objects.get(id=userId)
+        print("perform_create")
+        serializer.save(owner_user=user)
         community = serializer.instance
         CommunityMember.objects.create(
-            community=community, user=self.request.user, is_active=True)
+            community=community, user=user, is_active=True)
         Owner.objects.create(community=community,
-                             owner_user=self.request.user, is_active=True)
+                             owner_user=user, is_active=True)
 
-    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['get'])
     def user_role(self, request, pk=None):
         community = self.get_object()
         user = request.user

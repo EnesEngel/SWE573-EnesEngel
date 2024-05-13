@@ -7,7 +7,7 @@
   </head>
   <body>
     <p>Logged in as: {{ user.id }}</p>
-
+    <meta name="userId" content="{{ user.id }}" />
     <h1>Create Community</h1>
     <form id="createCommunityForm">
       <meta name="csrf-token" content="{{ csrf_token }}" />
@@ -21,19 +21,18 @@
 
       <label for="is_private">Private:</label>
       <input type="checkbox" id="is_private" name="is_private" /><br />
-
-      <button type="button" onclick="submitCommunity('{{ user.id }}')">
+      <button type="button" onclick="submitCommunity()">
         Create Community
       </button>
     </form>
 
     <script>
-      function submitCommunity(user_id) {
+      function submitCommunity() {
         const formData = new FormData(
           document.getElementById("createCommunityForm")
         );
-        formData.append("owner_user", user_id);
-
+        formData.append("user_id", getUserId());
+        console.log("csrf token: " + getCsrfToken());
         fetch("/communities/", {
           method: "POST",
           headers: {
@@ -55,12 +54,12 @@
             alert("Error creating community.");
           });
       }
-
+      function getUserId() {
+        return document
+          .querySelector('meta[name="userId"]')
+          .getAttribute("content");
+      }
       function getCsrfToken() {
-        print(
-          "csrf token: ",
-          document.querySelector('meta[name="csrf-token"]')
-        );
         return document
           .querySelector('meta[name="csrf-token"]')
           .getAttribute("content");
