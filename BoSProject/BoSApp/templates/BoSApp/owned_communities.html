@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token }}" />
     <title>Communities I own</title>
     <style>
       .community-box {
@@ -17,10 +18,16 @@
     <div id="communityList"></div>
 
     <script>
+      function getCsrfToken() {
+        return document
+          .querySelector('meta[name="csrf-token"]')
+          .getAttribute("content");
+      }
       function fetchCommunities() {
+        console.log("Token " + getCsrfToken());
         fetch("/owned-communities/", {
           headers: {
-            Authorization: "Token " + localStorage.getItem("authToken"),
+            Authorization: "Token " + getCsrfToken(),
           },
         })
           .then((response) => {
